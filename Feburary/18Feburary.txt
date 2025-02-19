@@ -2,6 +2,8 @@ Quick Revision Notes: Construct Smallest Number From DI String
 Problem Statement
 Given a string pattern (length n) consisting of:
 
+
+(solution to the problem:https://leetcode.com/problems/construct-smallest-number-from-di-string/submissions/1548750123/)
 'I' → num[i] < num[i+1] (increasing)
 'D' → num[i] > num[i+1] (decreasing)
 Find the lexicographically smallest string num (length n+1) using digits 1-9 without repetition.
