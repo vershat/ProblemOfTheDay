@@ -1,0 +1,85 @@
+Quick Revision Notes: Construct Smallest Number From DI String
+Problem Statement
+Given a string pattern (length n) consisting of:
+
+'I' → num[i] < num[i+1] (increasing)
+'D' → num[i] > num[i+1] (decreasing)
+Find the lexicographically smallest string num (length n+1) using digits 1-9 without repetition.
+
+
+Brute Force (Permutation-Based)
+Time Complexity: O((n+1)!) (Factorial, slow for large n)
+
+Steps:
+Generate the smallest possible permutation "123...(n+1)".
+Use next_permutation() until a valid sequence is found.
+Return the first valid permutation.
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    bool matches(string &num, string pattern) {
+        for (int i = 0; i < pattern.length(); i++) {
+            if ((pattern[i] == 'I' && num[i] > num[i + 1]) || 
+                (pattern[i] == 'D' && num[i] < num[i + 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    string smallestNumber(string pattern) {
+        int n = pattern.length();
+        string str = "";
+        for (int i = 1; i <= n + 1; i++) {
+            str += (i + '0');
+        }
+
+        while (!matches(str, pattern)) {
+            next_permutation(str.begin(), str.end());
+        }
+        return str;
+    }
+};
+🔹 Why is it slow?
+
+Generates all possible permutations.
+Checks each one until a valid pattern is found.
+Not practical for n > 8 due to factorial growth.
+
+Approach 2: Stack-Based (Efficient)
+Time Complexity: 𝑂(𝑛)
+ Key Idea: Use a stack to track decreasing sequences and pop when encountering 'I'.
+
+Steps:
+Iterate through pattern and maintain a monotonic decreasing stack.
+Push numbers onto the stack.
+When encountering 'I' or at the end, pop all stack elements to maintain order.
+Append popped elements to the result string.
+
+class Solution {
+public:
+    string smallestNumber(string pattern) {
+        stack<int> st;  
+        string ans = "";  
+        int counter = 1, n = pattern.size();
+
+        for (int i = 0; i <= n; i++) {
+            st.push(counter++);  
+
+            if (i == n || pattern[i] == 'I') {  
+                while (!st.empty()) {  
+                    ans += (st.top() + '0');  
+                    st.pop();  
+                }
+            }
+        }
+        return ans;
+    }
+};
+Why it works?
+
+Stack helps in handling decreasing sequences efficiently.
+Ensures the smallest lexicographical order while maintaining the pattern.
