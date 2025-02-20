@@ -1,0 +1,62 @@
+// Question: 1415. The k-th Lexicographical String of All Happy Strings of Length n
+// 
+// A happy string is a string that:
+// - Consists only of the letters 'a', 'b', 'c'.
+// - No two consecutive characters are the same.
+// Given n and k, return the k-th happy string in lexicographical order, or "" if k exceeds the count.
+// 
+// Constraints:
+// 1 <= n <= 10
+// 1 <= k <= 100
+
+#include <vector>
+#include <string>
+using namespace std;
+
+class Solution {
+public:
+    // Recursive function to generate all happy strings of length n
+    void solve(vector<string>& result, string &curr, int n) {
+        // Base case: If current string reaches required length, store it in result
+        if (curr.size() == n) {
+            result.push_back(curr);
+            return;
+        }
+        
+        // Try adding each character 'a', 'b', 'c' while ensuring no two consecutive are same
+        for (char ch = 'a'; ch <= 'c'; ch++) {
+            if (!curr.empty() && curr.back() == ch) continue; // Skip if last char is same
+            
+            curr.push_back(ch); // Add character to current string
+            solve(result, curr, n); // Recur for next position
+            curr.pop_back(); // Backtrack to explore other options
+        }
+    }
+    
+    string getHappyString(int n, int k) {
+        vector<string> result; // Store all happy strings
+        string curr = "";
+        
+        solve(result, curr, n); // Generate all happy strings
+        
+        // If k is larger than available strings, return empty string
+        if (result.size() < k) return "";
+        
+        return result[k - 1]; // Return k-th happy string (1-based index)
+    }
+};
+
+/*
+### Approach:
+1. Use **Backtracking** to generate all valid happy strings of length `n`.
+2. Maintain a list `result` to store happy strings in lexicographical order.
+3. At each step, choose a character ('a', 'b', or 'c') ensuring it doesn’t match the last character.
+4. If the current string reaches length `n`, add it to the `result` list.
+5. Once all happy strings are generated, return the `k-th` one (if exists).
+6. If `k` is greater than the total count of happy strings, return an empty string.
+
+### Complexity Analysis:
+- The maximum number of happy strings is `2 * 3^(n-1)`, so for `n = 10`, it's at most **59049**.
+- The backtracking approach ensures **O(3^n)** complexity in the worst case.
+- Space complexity is **O(3^n)** due to storing all happy strings.
+*/
