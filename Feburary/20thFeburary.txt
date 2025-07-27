@@ -1,0 +1,145 @@
+✅ Problem(https://leetcode.com/problems/find-unique-binary-string/description/?envType=daily-question&envId=2025-02-20)
+Given n unique binary strings, each of length n, return any binary string of length n that is not in the input list.
+Each string in nums contains only '0' or '1'.
+You must return a binary string of the same length that is not present in the input list.
+Multiple valid answers possible.
+
+✅ Constraints
+1 <= n <= 16 (but think: what if n were larger?)
+All strings are unique.
+Each string is of length n.
+
+🔧 Brute Force (Using Frequency Array)
+(Question in simple terms)
+You’re given n binary strings of length n.
+There are a total of 2ⁿ possible binary strings of length n.
+But you only have n of them in the input.
+So... at least one is missing.
+Now the task is to find any one missing string.
+
+
+1. Understand 
+Imagine all possible binary strings of length n.
+For example, if n = 2, possible strings are:
+00, 01, 10, 11 → total 4 = 2^2
+
+Now suppose the input is ["00", "01"].
+Clearly, 10 and 11 are missing.
+
+So brute force says:
+Let's go through all 2ⁿ strings and check which one is not in the input.
+
+
+To quickly check if a string is already in the input:
+
+Convert input strings to decimal (e.g., "10" → 2)
+Mark them in a bool[] freq of size 2ⁿ
+This makes checking super fast: just freq[i] == true/false
+So you loop from i = 0 to 2^n - 1 and ask:
+Is i marked? If not, then convert i to binary string → return that.
+
+
+3. Why It Makes Sense
+Because:
+You know the total number of possibilities: 2ⁿ
+You know input has only n strings → so n < 2ⁿ
+You want to return any missing string.
+So just generate all, and return the first not found.
+That’s the brute-force intuition.
+
+
+✅ Example (n = 3)
+Input: ["000", "001", "010"]
+
+All possible 3-bit binary strings:
+000 (0), 001 (1), 010 (2), 011 (3), 100 (4), 101 (5), 110 (6), 111 (7)
+
+Now mark 000, 001, 010 as present.
+
+Loop i from 0 to 7:
+
+i = 0 → already there
+
+i = 1 → already there
+
+i = 2 → already there
+
+i = 3 → not marked → convert to binary → "011" → return ✅
+
+⚠️ But Why Is It Called Brute Force?
+Because:
+
+You're checking every possible string.
+Even though there's a clever trick (diagonal), here you don’t care.
+You’re brute-force checking from 0 to 2ⁿ, and returning the first valid answer.
+It’s not clever. It’s guaranteed to work, but not optimal.
+
+CODE=>
+//int convertToDecimal(string str) {
+//    int ans = 0;
+//    for (char c : str) ans = ans * 2 + (c - '0');
+//    return ans;
+//}
+//
+//string convertToBinary(int num, int n) {
+//   string ans(n, '0');
+//    for (int i = n - 1; i >= 0; --i) {
+//        ans[i] = (num % 2) + '0';
+//        num /= 2;
+//    }
+//    return ans;
+//}
+//
+//string findDifferentBinaryString(vector<string>& nums) {
+//    int n = nums.size();
+//    vector<bool> freq(1 << n, false);
+//    for (string str : nums) freq[convertToDecimal(str)] = true;
+//
+//    for (int i = 0; i < (1 << n); i++) {
+//        if (!freq[i]) return convertToBinary(i, n);
+//    }
+//    return "";
+//}
+
+🔹 Time: O(n * 2^n)
+🔹 Space: O(2^n)
+✅ Use when: n ≤ 16
+
+
+💡 OPTIMAL APPROACH (CANTOR'S DIAGONALIZATION)
+✅ Core Idea:
+Build a new string that differs from the i-th string at its i-th bit.
+
+🔍 Why it works:
+Guarantees uniqueness: new string ≠ any in input.
+
+Based on diagonal flipping idea from Cantor’s proof.
+🔁 Steps:
+nums = ["011", 
+        "110", 
+        "101"]
+
+res = flip(nums[0][0]) + 
+      flip(nums[1][1]) + 
+      flip(nums[2][2])
+
+→ res = "100"
+Each bit is different from corresponding bit in each string → ✔️ unique.
+
+🧾 Complexity:
+⏱️ Time: O(n)
+🧠 Space: O(n)
+🥇 Always preferred — works for any n
+
+
+string findDifferentBinaryString(vector<string>& nums) {
+    string res = "";
+    for (int i = 0; i < nums.size(); i++) {
+        res += (nums[i][i] == '0') ? '1' : '0';
+    }
+    return res;
+}
+
+
+
+
